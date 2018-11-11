@@ -22,7 +22,7 @@ main = do
   alien <- spaceman (5,5)
   let testWorld = Overworld lv startingPlayer [alien]
   let testbattle = Battle testWorld startingPlayer [alien] (True,True) (State None AttackM) True
-  playIO FullScreen red 1 testbattle renderWorld handleInput idstep
+  playIO FullScreen red 5 testbattle renderWorld handleInput idstep
 
 idstep _ w@(Overworld l p lm) = do
   let newMonsters = map (\m -> monsterThink m w) lm
