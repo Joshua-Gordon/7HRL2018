@@ -54,17 +54,20 @@ renderWorld (Overworld lv p ms) = do
   let pms = Pictures $ map (flip drawM [("Spaceman",alien),("stairs",stairs)] ) ms
   return $ Pictures [ translate (scale (-1*px)) (scale (-1*py)) $ Pictures [drawLevel (posP p) lv [blkSq,floortile],pms], op ]
 
-{-
 renderBattle :: World -> IO Picture
 renderBattle (Battle w p ms selected) = do
   bg <- loadBMP "battlebackground.bmp"
   let rect = Color blue (rectangleWire 100 500)
-	in case selected of
+  return $ Pictures [bg,case selected of
     (True,True) -> translate (-200) (-200) rect
--}
+    (True,False) -> translate 200 (-200) rect
+    (False,True) -> translate (-200) (-500) rect
+    (False,False) -> translate 200 (-500) rect]
 
 main = do
   lv <- genLevel 60 60
-  let testWorld = Overworld lv (startingPlayer{posP=(5,3),headingP = Right})  [(spaceman (2,2)){nameM="stairs"},spaceman (7,7)]
+  alien <- spaceman (5,5)
+  let testWorld = Overworld lv (startingPlayer{posP=(5,3),headingP = Right})  [(alien (2,2)){nameM="stairs"},alien (7,7)]
+  let testWorld = Overworld lv (startingPlayer{posP=(5,3),headingP = Right})  [alien]
   pic <- renderWorld testWorld
   display (InWindow "test" (1920,1080) (0,0)) red pic
