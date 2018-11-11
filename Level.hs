@@ -18,9 +18,7 @@ randBool = do
           let (x,_) = randomR (0,2) g :: (Int,StdGen)
           return $ x == 1
 
-chunk :: Int -> [a] -> [[a]]
-chunk _ [] = [[]]
-chunk n xs = take n xs : chunk n (drop n xs)
+
 
 genLevel :: Int -> Int -> IO Level
 genLevel x y = do
