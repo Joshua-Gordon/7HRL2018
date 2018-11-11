@@ -1,11 +1,15 @@
 module Main where
 
+import System.Random
+
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 
 import Level
 import Screen
 import Mob
+import Battle
+import Util
 
 
 
@@ -24,9 +28,15 @@ idstep _ w@(Overworld l p lm) = do
   return $ Overworld l p newMonsters
 
 stepBattle :: Float -> World -> IO World
-stepBattle _ here@(Battle w p ms sel (State pa ma)) | null ms = return w
+stepBattle _ here@(Battle w p ms sel (State pa ma) turn) | null ms = return w
                                                     | pa == None = return here
-                                                    | otherwise = case pa of
+                                                    | otherwise = if turn then case pa of
                                                       Run -> return w
                                                       Attack -> do
-                                                        enemy <- choice mkStdGen ms
+                                                        g <- getStdGen
+                                                        (idx,g') <- choice g [0..length ms]-- :: (Int,StdGen)
+                                                        let m = attackMob p (ms !! idx)
+                                                        return $ Battle w p (replace ms idx m) sel (State None ma)
+                                                      Item _ -> return here
+                                                      Ability _ -> return here
+                                                      else return here
