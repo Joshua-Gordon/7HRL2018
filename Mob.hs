@@ -105,9 +105,9 @@ spaceman p = do
 
 attackMob :: Player -> Monster -> Maybe Monster
 attackMob p m = let s = statsP p
-										s' = statsM m
-										damage = (atk s - def s')
-										hpcount = hp s'
+                    s' = statsM m
+                    damage = (atk s - def s')
+                    hpcount = hp s'
 								in if hpcount > damage then Just m{statsM=s'{hp=hpcount-damage}} else Nothing
 
 movePlayer :: Heading -> Player -> Level -> Player

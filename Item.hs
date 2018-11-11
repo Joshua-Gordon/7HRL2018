@@ -11,6 +11,9 @@ data Item = Item {
   use :: Pos -> World -> World
 	}
 
+instance Eq Item where
+  i1 == i2 = name i1 == name i2
+
 type Inv = [Item]
 
 data Equip = Equip {

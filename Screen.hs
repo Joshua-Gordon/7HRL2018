@@ -55,7 +55,7 @@ renderWorld (Overworld lv p ms) = do
   return $ Pictures [ translate (scale (-1*px)) (scale (-1*py)) $ Pictures [drawLevel (posP p) lv [blkSq,floortile],pms], op ]
 
 renderBattle :: World -> IO Picture
-renderBattle (Battle w p ms selected) = do
+renderBattle (Battle w p ms selected state turn) = do
   bg <- loadBMP "battlebackground.bmp"
   let rect = Color blue (rectangleWire 100 500)
   return $ Pictures [bg,case selected of
