@@ -58,8 +58,11 @@ renderBattle :: World -> IO Picture
 renderBattle (Battle w p ms selected) = do
   bg <- loadBMP "battlebackground.bmp"
   let rect = Color blue (rectangleWire 100 500)
-  in case selected of
-    (True,True) -> translate -200 -200 rect
+  return $ Pictures [bg,case selected of
+    (True,True) -> translate (-200) (-200) rect
+    (True,False) -> translate 200 (-200) rect
+    (False,True) -> translate (-200) (-500) rect
+    (False,False) -> translate 200 (-500) rect]
 
 sMain = do
   lv <- genLevel 60 60

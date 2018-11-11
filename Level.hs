@@ -11,10 +11,11 @@ import Debug.Trace
 
 import Util
 import {-# SOURCE #-} Mob
+import Battle
 
 type Level = [[Tile]]
 
-data World = Overworld Level Player [Monster] | Battle World Player [Monster] (Bool,Bool)
+data World = Overworld Level Player [Monster] | Battle World Player [Monster] (Bool,Bool) BattleState
 
 handleInput :: Event -> World -> IO World
 handleInput (EventKey (SpecialKey KeyUp) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = do print "up"; return $ Overworld l (movePlayer Util.Up p l) ms

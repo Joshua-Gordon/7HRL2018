@@ -104,3 +104,10 @@ movePlayer h p l = let (x,y) = posP p in case h of
 									Util.Down -> if l!!x!!(y-1) == Floor then p{posP=(x,y-1)} else p
 									Util.Left -> if l!!(x-1)!!y == Floor then p{posP=(x-1,y)} else p
 									Util.Right -> if l!!(x+1)!!y == Floor then p{posP=(x+1,y)} else p
+
+attackMob :: Player -> Monster -> Maybe Monster
+attackMob p m = let s = statsP p
+										s' = statsM m
+										damage = (atk s - def s')
+										hpcount = hp s'
+								in if hpcount > damage then Just m{statsM=s'{hp=hpcount-damage}} else Nothing

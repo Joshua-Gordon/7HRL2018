@@ -3,11 +3,7 @@ module Battle where
 import Mob
 import Item
 
-data BattleResult = Loss | Win [Item]
+data PlayerAction = Attack | Item Item | Ability Item | Run | None
+data MonsterAction = AttackM | ItemM Item | Ability ItemM
 
-data Battle = Battle {
-                player :: Player
-              }
-
-runBattle :: (Mob a) => a -> [a] -> IO BattleResult
-runBattle player enemies = do
+data BattleState = State PlayerAction MonsterAction

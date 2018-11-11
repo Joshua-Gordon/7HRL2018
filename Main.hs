@@ -21,3 +21,11 @@ main = do
 
 idstep :: Float -> World -> IO World
 idstep _ w = return w
+
+stepBattle :: Float -> World -> IO World
+stepBattle _ here@(Battle w p ms sel (State pa ma)) | null ms = return w
+                                                    | pa == None = return here
+                                                    | otherwise = case pa of
+                                                      Run -> return w
+                                                      Attack -> do
+                                                        enemy <- choice mkStdGen ms
