@@ -7,6 +7,9 @@ import {-# SOURCE #-} Level
 import Data.Maybe
 import System.Random
 
+theStairsCanWanderAround :: Bool
+theStairsCanWanderAround = True
+
 defaultStats :: Stats
 defaultStats = Stats { hpmax = 10, hp = 10, atk = 10, def = 10, spd = 10 }
 
@@ -113,6 +116,27 @@ spaceman p = do
 						heardStepExpTime = 0
 }
 
+stairs :: Pos -> IO Monster
+stairs p = do
+	gen <- newStdGen
+	return $ Monster {
+						nameM = "stairs",
+						descM = "They send you places!",
+						posM = p,
+						invM = [],
+						headingM = Util.Up,
+						statsM = Stats {
+														hpmax = 4,
+														hp = 4,
+														atk = 3,
+														def = 4,
+														spd = 6
+													 },
+						gen = gen,
+						heardStepPos = Nothing,
+						heardStepExpTime = 0
+}
+
 attackMob :: Player -> Monster -> Maybe Monster
 attackMob p m = let s = statsP p
                     s' = statsM m
@@ -137,7 +161,7 @@ moveMonster h m l = let
 		_ -> headM
 
 monsterThink :: Monster -> World -> Monster
-monsterThink m (Overworld l p lm) = if (nameM m) == "stairs"
+monsterThink m (Overworld l p lm) = if (nameM m) == "stairs" && (not theStairsCanWanderAround)
   then m
   else let
 	  valid = filter (\(h, t) -> t == Just Floor) (map (\h -> (h, tile l $ applyHeading (posM m) h 1)) allHeadings)
