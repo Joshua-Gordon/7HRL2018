@@ -1,5 +1,5 @@
-module Screen where
-
+--module Screen where
+import Data.Maybe
 import Graphics.Gloss hiding (scale)
 import Control.Monad
 import Util
@@ -43,15 +43,15 @@ orient Down  p = rotate 180 p
 orient Left  p = rotate (-90) p
 orient Right p = rotate (90) p
 
-drawM :: Monster -> Picture -> Picture
-drawM m p = let (x,y) = posM m in translate (scale x) (scale y) $ orient (headingM m) p
+drawM :: Monster -> [(String,Picture)] -> Picture
+drawM m ps = let (x,y) = posM m in translate (scale x) (scale y) $ orient (headingM m) $ fromJust $ lookup (nameM m) ps 
 
 renderWorld :: World -> IO Picture
 renderWorld (Overworld lv p ms) = do
-  [floortile,player,alien] <- sequence $ map loadBMP ["floortile.bmp","player.bmp","alien.bmp"]
+  [floortile,player,alien,stairs] <- sequence $ map loadBMP ["floortile.bmp","player.bmp","alien.bmp","stairs.bmp"]
   let (px,py) = posP p
   let op = orient (heading p) player
-  let pms = Pictures $ map (flip drawM alien) ms
+  let pms = Pictures $ map (flip drawM [("Spaceman",alien),("stairs",stairs)] ) ms
   return $ Pictures [ translate (scale (-1*px)) (scale (-1*py)) $ Pictures [drawLevel (posP p) lv [blkSq,floortile],pms], op ]
 
 renderBattle :: World -> IO Picture
@@ -64,9 +64,10 @@ renderBattle (Battle w p ms selected state turn) = do
     (False,True) -> translate (-200) (-500) rect
     (False,False) -> translate 200 (-500) rect]
 
-sMain = do
+main = do
   lv <- genLevel 60 60
   alien <- spaceman (5,5)
+  let testWorld = Overworld lv (startingPlayer{posP=(5,3),headingP = Right})  [(alien (2,2)){nameM="stairs"},alien (7,7)]
   let testWorld = Overworld lv (startingPlayer{posP=(5,3),headingP = Right})  [alien]
   pic <- renderWorld testWorld
   display (InWindow "test" (1920,1080) (0,0)) red pic
