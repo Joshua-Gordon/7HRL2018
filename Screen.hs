@@ -54,6 +54,13 @@ renderWorld (Overworld lv p ms) = do
   let pms = Pictures $ map (flip drawM alien) ms
   return $ Pictures [ translate (scale (-1*px)) (scale (-1*py)) $ Pictures [drawLevel (posP p) lv [blkSq,floortile],pms], op ]
 
+renderBattle :: World -> IO Picture
+renderBattle (Battle w p ms selected) = do
+  bg <- loadBMP "battlebackground.bmp"
+  let rect = Color blue (rectangleWire 100 500)
+  in case selected of
+    (True,True) -> translate -200 -200 rect
+
 sMain = do
   lv <- genLevel 60 60
   let testWorld = Overworld lv (startingPlayer{posP=(5,3),headingP = Right})  [spaceman (5,5)]

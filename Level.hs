@@ -5,6 +5,7 @@ import Graphics.Gloss.Interface.IO.Game
 
 import System.Random
 import Control.Monad
+import Data.List
 
 import Debug.Trace
 
@@ -13,7 +14,7 @@ import {-# SOURCE #-} Mob
 
 type Level = [[Tile]]
 
-data World = Overworld Level Player [Monster] | Battle World Player [Monster]
+data World = Overworld Level Player [Monster] | Battle World Player [Monster] (Bool,Bool)
 
 handleInput :: Event -> World -> IO World
 handleInput (EventKey (SpecialKey KeyUp) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = do print "up"; return $ Overworld l (movePlayer Util.Up p l) ms
@@ -84,4 +85,4 @@ drill l p = let (x,y) = getPos p
                             Util.Down -> (x,y-1)
                             Util.Left -> (x-1,y)
                             Util.Right -> (x+1,y)
-                in [[if m == x' && n == y' then Floor else l!!n!!m | m <- [0 .. length l - 1]] | n <- [0 .. length (head l) - 1]]
+                in transpose [[if m == y' && n == x' then Floor else l!!n!!m | n <- [0 .. length l - 1]] | m <- [0 .. length (head l) - 1]]
