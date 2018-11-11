@@ -1,3 +1,5 @@
+module Main where
+
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 
@@ -9,6 +11,7 @@ import Mob
 
 
 main :: IO ()
+--main = sMain
 main = do
   lv' <- genLevel 33 59
   let lv = boundLevel lv'
