@@ -10,3 +10,5 @@ data Monster
 movePlayer :: Heading -> Player -> Level -> Player
 getHeading :: Player -> Heading
 getPos :: Player -> Pos
+getMonsterPos :: Monster -> Pos
+setHeard :: Monster -> Pos -> Int -> Monster

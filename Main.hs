@@ -21,7 +21,7 @@ main = do
   let lv = boundLevel lv'
   alien <- spaceman (5,5)
   let testWorld = Overworld lv startingPlayer [alien]
-  playIO FullScreen red 1 testWorld renderWorld handleInput idstep
+  playIO FullScreen red 5 testWorld renderWorld handleInput idstep
 
 idstep _ w@(Overworld l p lm) = do
   let newMonsters = map (\m -> monsterThink m w) lm

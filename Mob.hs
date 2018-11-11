@@ -74,8 +74,16 @@ data Monster = Monster {
 							invM :: Inv,
 							headingM :: Heading,
 							statsM :: Stats,
-							gen :: StdGen
+							gen :: StdGen,
+							heardStepPos :: Maybe Pos,
+							heardStepExpTime :: Int
 }
+
+setHeard :: Monster -> Pos -> Int -> Monster
+setHeard m p i = m{heardStepPos = Just p, heardStepExpTime = i}
+
+getMonsterPos :: Monster -> Pos
+getMonsterPos = posM
 
 instance Mob Monster where
 	inv = invM
@@ -100,7 +108,9 @@ spaceman p = do
 														def = 4,
 														spd = 6
 													 },
-						gen = gen
+						gen = gen,
+						heardStepPos = Nothing,
+						heardStepExpTime = 0
 }
 
 attackMob :: Player -> Monster -> Maybe Monster
@@ -127,8 +137,17 @@ moveMonster h m l = let
 		_ -> headM
 
 monsterThink :: Monster -> World -> Monster
-monsterThink m (Overworld l p lm) = let
-  valid = filter (\(h, t) -> t == Just Floor) (map (\h -> (h, tile l $ applyHeading (posM m) h 1)) allHeadings)
-  in if null valid then m else let
-	(move, newGen) = choice (gen m) valid
-  in moveMonster (fst $ move) m{gen = newGen} l
+monsterThink m (Overworld l p lm) = if (nameM m) == "stairs"
+  then m
+  else let
+	  valid = filter (\(h, t) -> t == Just Floor) (map (\h -> (h, tile l $ applyHeading (posM m) h 1)) allHeadings)
+	  in if null valid then m else let
+		(move, newGen) = choice (gen m) valid
+		randMoved = moveMonster (fst $ move) m{gen = newGen} l
+	  in case heardStepPos m of
+		Nothing -> randMoved
+		Just pos -> let
+			hd = (closestHeading (posM m) pos)
+			in if (heardStepExpTime m) > 0 && (elem hd (map fst valid))
+				then moveMonster hd m{heardStepExpTime = (heardStepExpTime m) - 1} l
+				else randMoved
