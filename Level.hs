@@ -6,14 +6,20 @@ import Control.Monad
 import Debug.Trace
 
 import Util
-import Mob
+import {-# SOURCE #-} Mob
 
 type Level = [[Tile]]
 
 
 
-data Tile = Floor | Wall | Object (->) Player Player --Have Object include function for interact
-            deriving (Eq,Show)
+data Tile = Floor | Wall | Object (Player -> Player) --Have Object include function for interact
+
+instance Eq Tile where
+  Floor == Floor = True
+  Wall == Wall = True
+  Floor == Wall = False
+  Wall == Floor = False
+
 
 randBool :: IO Bool
 randBool = do
@@ -30,7 +36,6 @@ genLevel x y = do
               let bools = init $ chunk x boolsflat
               print bools
               let levelFirst = [[if (bools !! n !! m) then Floor else Wall | m <- [0..x-1]] | n <- [0..y-1]]
-              print levelFirst
               return $ generate 100 levelFirst
 
 (!!!) :: Maybe [a] -> Int -> Maybe a
