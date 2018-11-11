@@ -30,6 +30,7 @@ class Mob a where
 
 
 data Player = Player {
+							name :: String,
 							posP :: Pos,
 							invP :: Inv,
 							headingP :: Heading,
@@ -38,6 +39,7 @@ data Player = Player {
 
 startingPlayer :: Player
 startingPlayer = Player {
+									name = "bbrian"
 									posP = (0,0),
 									invP = [],
 									headingP = Util.Up,
@@ -50,4 +52,33 @@ instance Mob Player where
 	heading = headingP
 	baseStats = statsP
 
-data Monster
+data Monster = Monster {
+							name :: String,
+							desc :: String,
+							posM :: Pos,
+							invM :: Inv,
+							headingM :: Heading,
+							statsM :: Stats
+}
+
+instance Mob Monster where
+	inv = invM
+	pos = posM
+	heading = headingM
+	baseStats = statsM
+
+spaceman :: Pos -> Monster
+spaceman p = Monster {
+						name = "Spaceman",
+						desc = "A little green man. How did he get here?",
+						posM = p
+						invM = []
+						headingM = Util.Up,
+						statsM = Stats {
+														hpmax = 4,
+														hp = 4,
+														atk = 3,
+														def = 4,
+														spd = 6
+													 }
+}
