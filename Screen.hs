@@ -1,5 +1,5 @@
-module Screen where
-
+--module Screen where
+import Data.Maybe
 import Graphics.Gloss hiding (scale)
 import Control.Monad
 import Util
@@ -43,26 +43,28 @@ orient Down  p = rotate 180 p
 orient Left  p = rotate (-90) p
 orient Right p = rotate (90) p
 
-drawM :: Monster -> Picture -> Picture
-drawM m p = let (x,y) = posM m in translate (scale x) (scale y) $ orient (headingM m) p
+drawM :: Monster -> [(String,Picture)] -> Picture
+drawM m ps = let (x,y) = posM m in translate (scale x) (scale y) $ orient (headingM m) $ fromJust $ lookup (nameM m) ps 
 
 renderWorld :: World -> IO Picture
 renderWorld (Overworld lv p ms) = do
-  [floortile,player,alien] <- sequence $ map loadBMP ["floortile.bmp","player.bmp","alien.bmp"]
+  [floortile,player,alien,stairs] <- sequence $ map loadBMP ["floortile.bmp","player.bmp","alien.bmp","stairs.bmp"]
   let (px,py) = posP p
   let op = orient (heading p) player
-  let pms = Pictures $ map (flip drawM alien) ms
+  let pms = Pictures $ map (flip drawM [("Spaceman",alien),("stairs",stairs)] ) ms
   return $ Pictures [ translate (scale (-1*px)) (scale (-1*py)) $ Pictures [drawLevel (posP p) lv [blkSq,floortile],pms], op ]
 
+{-
 renderBattle :: World -> IO Picture
 renderBattle (Battle w p ms selected) = do
   bg <- loadBMP "battlebackground.bmp"
   let rect = Color blue (rectangleWire 100 500)
-  in case selected of
-    (True,True) -> translate -200 -200 rect
+	in case selected of
+    (True,True) -> translate (-200) (-200) rect
+-}
 
-sMain = do
+main = do
   lv <- genLevel 60 60
-  let testWorld = Overworld lv (startingPlayer{posP=(5,3),headingP = Right})  [spaceman (5,5)]
+  let testWorld = Overworld lv (startingPlayer{posP=(5,3),headingP = Right})  [(spaceman (2,2)){nameM="stairs"},spaceman (7,7)]
   pic <- renderWorld testWorld
   display (InWindow "test" (1920,1080) (0,0)) red pic
