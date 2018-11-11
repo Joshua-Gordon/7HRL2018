@@ -5,6 +5,8 @@ import Control.Monad
 
 import Debug.Trace
 
+import Util
+
 type Level = [[Tile]]
 
 data Tile = Floor | Wall | Object --Have Object include function for interact
@@ -49,3 +51,6 @@ step x y l = let n = neighbors x y l
 generate :: Int -> Level -> Level
 generate n l | n == 0 = l
              | otherwise = generate (n-1) [[step x y l | x <- [0..length l - 1]] | y <- [0..length (head l) - 1]]
+
+tile :: Level -> Util.Pos -> Tile
+tile l p = (l !! (fst p)) !! (snd p)
