@@ -1,3 +1,5 @@
+module Main where
+
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 
@@ -9,6 +11,7 @@ import Mob
 
 
 main :: IO ()
+--main = sMain
 main = do
   lv <- genLevel 59 33
   let testWorld = Overworld lv startingPlayer []
