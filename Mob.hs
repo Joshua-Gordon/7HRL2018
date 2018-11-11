@@ -1,5 +1,7 @@
 module Mob where
 
+import Util
+
 import Data.Maybe
 
 data Item = Item {
@@ -21,13 +23,15 @@ data Equip {
 }
 
 data Stats = Stats {
+	hpmax :: Int,
+	hp :: Int,
 	atk :: Int,
 	def :: Int,
 	spd :: Int
 }
 
 defaultStats :: Stats
-defaultStats = Stats { atk = 10, def = 10, spd = 10 }
+defaultStats = Stats { hpmax = 10, hp = 10, atk = 10, def = 10, spd = 10 }
 
 applyStats :: Stats -> Stats -> Stats
 applyStats l r = Stats {
@@ -40,7 +44,8 @@ data Action =
 	Move Pos |
 	Use Item |
 	Attack Mob |
-	Defend
+	Defend |
+	NOP
 
 class Mob where
 	inv :: Inv
@@ -53,3 +58,24 @@ class Mob where
 
 	effStats :: Stats
 	effStats = foldr (applyStats) (baseStats x) (catMaybe $ map equipStats $ inv x)
+
+data Player = Player {
+							pos :: Pos,
+							inv :: Inv,
+							heading :: Heading,
+							stats :: Stats
+							}
+
+startingPlayer :: Player
+startingPlayer = Player {
+									pos = (0,0),
+									inv = [],
+									heading = Util.Up,
+									stats = defaultStats
+									}
+
+instance Player Mob where
+	inv = inv,
+	pos = pos,
+	heading = heading,
+	baseStats = stats
