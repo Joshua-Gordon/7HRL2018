@@ -49,7 +49,7 @@ drawM m ps = let (x,y) = posM m in translate (scale x) (scale y) $ orient (headi
 renderWorld :: World -> IO Picture
 renderWorld (Overworld lv p ms) = do
   [floortile,player,alien,stairs,keychain] <- sequence 
-    $ map loadBMP ["floortile.bmp","player.bmp","alien.bmp","stairs.bmp","stairs.bmp"]
+    $ map loadBMP ["floortile.bmp","player.bmp","alien.bmp","stairs.bmp","bee.bmp"]
   let (px,py) = posP p
   let op = orient (heading p) player
   let pms = Pictures $ map (flip drawM [("Spaceman",alien),("stairs",stairs),("bee",keychain)]) ms
