@@ -1,5 +1,7 @@
 module Util where
 
+import System.Random
+
 type Pos = (Int, Int)
 
 zeroPos :: Pos
@@ -20,3 +22,12 @@ applyHeading (x,y) Util.Right d = (x+d, y)
 
 headingOff :: Heading -> Int -> Pos
 headingOff = applyHeading zeroPos
+
+allHeadings :: [Heading]
+allHeadings = [Util.Up, Util.Down, Util.Left, Util.Right]
+
+choice :: StdGen -> [a] -> (a, StdGen)
+choice s l = let
+	ln = length l
+	(idx, newS) = randomR (0,ln - 1) s
+	in (l !! idx, newS)

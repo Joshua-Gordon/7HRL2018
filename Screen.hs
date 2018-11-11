@@ -66,6 +66,7 @@ renderBattle (Battle w p ms selected) = do
 
 sMain = do
   lv <- genLevel 60 60
-  let testWorld = Overworld lv (startingPlayer{posP=(5,3),headingP = Right})  [spaceman (5,5)]
+  alien <- spaceman (5,5)
+  let testWorld = Overworld lv (startingPlayer{posP=(5,3),headingP = Right})  [alien]
   pic <- renderWorld testWorld
   display (InWindow "test" (1920,1080) (0,0)) red pic
