@@ -23,6 +23,7 @@ class Mob a where
 	inv :: a -> Inv
 	pos :: a -> Pos
 	heading :: a -> Heading
+	name :: a -> String
 
 	baseStats :: a -> Stats
 	baseStats _ = defaultStats
@@ -52,6 +53,7 @@ instance Mob Player where
 	inv = invP
 	pos = posP
 	heading = headingP
+	name = nameP
 	baseStats = statsP
 
 data Monster = Monster {
@@ -67,6 +69,7 @@ instance Mob Monster where
 	inv = invM
 	pos = posM
 	heading = headingM
+	name = nameM
 	baseStats = statsM
 
 spaceman :: Pos -> Monster
