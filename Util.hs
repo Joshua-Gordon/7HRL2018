@@ -52,3 +52,6 @@ closestHeading (xa,ya) (xb,yb) = let
 	in if (abs dx) > (abs dy)
 		then if (signum dx) >= 0 then Util.Right else Util.Left
 		else if (signum dy) >= 0 then Util.Up else Util.Down
+
+closestHeadings :: Pos -> Pos -> (Heading, Heading)
+closestHeadings (xa,ya) (xb,yb) = (if xb >= xa then Util.Right else Util.Left, if yb >= ya then Util.Up else Util.Down)

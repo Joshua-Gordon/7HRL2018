@@ -147,7 +147,11 @@ monsterThink m (Overworld l p lm) = if (nameM m) == "stairs"
 	  in case heardStepPos m of
 		Nothing -> randMoved
 		Just pos -> let
-			hd = (closestHeading (posM m) pos)
-			in if (heardStepExpTime m) > 0 && (elem hd (map fst valid))
-				then moveMonster hd m{heardStepExpTime = (heardStepExpTime m) - 1} l
+			(hdx,hdy) = (closestHeadings (posM m) pos)
+			in if (heardStepExpTime m) > 0
+				then if (elem hdx (map fst valid))
+					then moveMonster hdx m{heardStepExpTime = (heardStepExpTime m) - 1} l
+					else if (elem hdy (map fst valid))
+						then moveMonster hdy m{heardStepExpTime = (heardStepExpTime m) - 1} l
+						else randMoved
 				else randMoved
