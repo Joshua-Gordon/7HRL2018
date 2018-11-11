@@ -1,7 +1,15 @@
 module Mob where
 
-import Item
 import Data.Maybe
+
+data Item = Item {
+	name :: String,
+	desc :: String,
+	equipStats :: Maybe Stats,
+	use :: Mob.Mob -> Maybe Mob,
+}
+
+type Inv = [Item]
 
 data Equip {
 	lHand :: Maybe Item,
@@ -15,7 +23,7 @@ data Equip {
 data Stats = Stats {
 	atk :: Int,
 	def :: Int,
-	spd :: Int,
+	spd :: Int
 }
 
 defaultStats :: Stats
@@ -30,16 +38,18 @@ applyStats l r = Stats {
 
 data Action =
 	Move Pos |
-	Use Item.Item |
-	Attack Mob
+	Use Item |
+	Attack Mob |
+	Defend
 
-class Mob x where
-	inv x :: Item.Inv
-	pos x :: Pos
-	act x :: Action
+class Mob where
+	inv :: Inv
+	pos :: Pos
+	act :: Action
+	heading :: Heading
 
-	baseStats x :: Stats
-	baseStats x = defaultStats
+	baseStats :: Stats
+	baseStats = defaultStats
 
-	effStats x :: Stats
-	effStats x = foldr (applyStats) (baseStats x) (catMaybe $ map equipStats $ inv x)
+	effStats :: Stats
+	effStats = foldr (applyStats) (baseStats x) (catMaybe $ map equipStats $ inv x)

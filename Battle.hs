@@ -5,4 +5,6 @@ import Item
 
 data BattleResult = Loss | Win [Item]
 
-runBattle :: (Mob a) => a -> [a] -> BattleResult
+runBattle :: (Mob a) => a -> [a] -> IO BattleResult
+runBattle player enemies = do
+    
