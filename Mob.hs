@@ -5,6 +5,7 @@ import Item
 import {-# SOURCE #-} Level
 
 import Data.Maybe
+import System.Random
 
 defaultStats :: Stats
 defaultStats = Stats { hpmax = 10, hp = 10, atk = 10, def = 10, spd = 10 }
@@ -72,7 +73,8 @@ data Monster = Monster {
 							posM :: Pos,
 							invM :: Inv,
 							headingM :: Heading,
-							statsM :: Stats
+							statsM :: Stats,
+							gen :: StdGen
 }
 
 instance Mob Monster where
@@ -82,8 +84,10 @@ instance Mob Monster where
 	name = nameM
 	baseStats = statsM
 
-spaceman :: Pos -> Monster
-spaceman p = Monster {
+spaceman :: Pos -> IO Monster
+spaceman p = do
+	gen <- newStdGen
+	return $ Monster {
 						nameM = "Spaceman",
 						descM = "A little green man. How did he get here?",
 						posM = p,
@@ -95,12 +99,29 @@ spaceman p = Monster {
 														atk = 3,
 														def = 4,
 														spd = 6
-													 }
+													 },
+						gen = gen
 }
 
 movePlayer :: Heading -> Player -> Level -> Player
-movePlayer h p l = let (x,y) = posP p in case h of
-									Util.Up -> if l!!x!!(y+1) == Floor then p{posP=(x,y+1)} else p
-									Util.Down -> if l!!x!!(y-1) == Floor then p{posP=(x,y-1)} else p
-									Util.Left -> if l!!(x-1)!!y == Floor then p{posP=(x-1,y)} else p
-									Util.Right -> if l!!(x+1)!!y == Floor then p{posP=(x+1,y)} else p
+movePlayer h p l = let
+	newPos = applyHeading (posP p) h 1
+	headP = p{headingP = h}
+	in case (tile l newPos) of
+		Just Floor -> headP{posP = newPos}
+		_ -> headP
+
+moveMonster :: Heading -> Monster -> Level -> Monster
+moveMonster h m l = let
+	newPos = applyHeading (posM m) h 1
+	headM = m{headingM = h}
+	in case (tile l newPos) of
+		Just Floor -> headM{posM = newPos}
+		_ -> headM
+
+monsterThink :: Monster -> World -> Monster
+monsterThink m (Overworld l p lm) = let
+  valid = filter (\(h, t) -> t == Just Floor) (map (\h -> (h, tile l $ applyHeading (posM m) h 1)) allHeadings)
+  in if null valid then m else let 
+	(move, newGen) = choice (gen m) valid
+  in moveMonster (fst $ move) m{gen = newGen} l

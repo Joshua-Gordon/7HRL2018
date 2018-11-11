@@ -80,9 +80,5 @@ boundLevel l = let sides = map (\s -> Wall : s ++ [Wall]) l
 
 drill :: Level -> Player -> Level
 drill l p = let (x,y) = getPos p
-                (x',y') = case getHeading p of
-                            Util.Up -> (x,y+1)
-                            Util.Down -> (x,y-1)
-                            Util.Left -> (x-1,y)
-                            Util.Right -> (x+1,y)
-                in transpose [[if m == y' && n == x' then Floor else l!!n!!m | n <- [0 .. length l - 1]] | m <- [0 .. length (head l) - 1]]
+                (x',y') = applyHeading (getPos p) (getHeading p) 1
+			in [[if n == x' && m == y' then Floor else l!!n!!m | m <- [0 .. width l - 1]] | n <- [0 .. height l - 1]]
