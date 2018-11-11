@@ -1,6 +1,4 @@
-module Screen where
-
-import Graphics.Gloss
+import Graphics.Gloss hiding (scale)
 import Control.Monad
 import Util
 import Mob
@@ -17,22 +15,13 @@ testSpace = [[Wall  , Floor , Wall ],
              [Wall  , Floor , Wall ]]
 
 drawLevel :: (Int,Int) -> [[Tile]] -> [Picture] -> Picture
-drawLevel p tss as = translate (-29*32) (-16*32)
-  $ let ntss = grab p tss in drawGrid $ map (map ((flip drawSpace) as)) ntss
-
-grab :: (Int,Int) -> [[a]] -> [[a]]
-grab (x,y) xss = (colGrab y) . (map (rowGrab x)) $ xss
-
-rowGrab :: Int -> [a] -> [a]
-rowGrab x xs = (drop (x - 29)) . (take 59) $ xs
-
-colGrab :: Int -> [a] -> [a]
-colGrab x xs = (drop (x - 17)) . (take 33) $ xs
+drawLevel p tss as =  drawGrid $ map (map ((flip drawSpace) as)) tss
 
 drawGrid :: [[Picture]] -> Picture
 drawGrid xss = Pictures [translate (scale y) (scale x) p | ((x,y),p) <- concat $ grindex xss ]
-  where
-    scale = fromIntegral . (*32) :: Int -> Float
+
+scale :: Int -> Float 
+scale = fromIntegral . (*32) 
 
 grindex :: [[a]] -> [[((Int,Int),a)]]
 grindex l = let wid = length l
@@ -52,8 +41,22 @@ orient Down  p = rotate 180 p
 orient Left  p = rotate (-90) p
 orient Right p = rotate (90) p
 
+drawM :: Monster -> Picture -> Picture
+drawM m p = let (x,y) = posM m in translate (scale x) (scale y) $ orient (headingM m) p
+
 renderWorld :: World -> IO Picture
 renderWorld (Overworld lv p ms) = do
   [floortile,player,alien] <- sequence $ map loadBMP ["floortile.bmp","player.bmp","alien.bmp"]
+  let (px,py) = posP p
   let op = orient (heading p) player
-  return $ Pictures [drawLevel (29,17) lv [blkSq,floortile],op]
+  let pms = Pictures $ map (flip drawM alien) ms
+  return $ Pictures [drawLevel (posP p) lv [blkSq,floortile],op,pms]
+
+main = do
+  lv <- genLevel 60 60
+  let testWorld = Overworld lv (startingPlayer{headingP = Right})  [spaceman (5,5)]
+  pic <- renderWorld testWorld
+  display (InWindow "test" (1920,1080) (0,0)) red pic
+
+
+
