@@ -1,3 +1,5 @@
+module Screen where
+
 import Graphics.Gloss hiding (scale)
 import Control.Monad
 import Util
@@ -18,10 +20,10 @@ drawLevel :: (Int,Int) -> [[Tile]] -> [Picture] -> Picture
 drawLevel p tss as =  drawGrid $ map (map ((flip drawSpace) as)) tss
 
 drawGrid :: [[Picture]] -> Picture
-drawGrid xss = Pictures [translate (scale y) (scale x) p | ((x,y),p) <- concat $ grindex xss ]
+drawGrid xss = Pictures [translate (scale x) (scale y) p | ((x,y),p) <- concat $ grindex xss ]
 
-scale :: Int -> Float 
-scale = fromIntegral . (*32) 
+scale :: Int -> Float
+scale = fromIntegral . (*32)
 
 grindex :: [[a]] -> [[((Int,Int),a)]]
 grindex l = let wid = length l
@@ -52,11 +54,8 @@ renderWorld (Overworld lv p ms) = do
   let pms = Pictures $ map (flip drawM alien) ms
   return $ Pictures [ translate (scale (-1*px)) (scale (-1*py)) $ Pictures [drawLevel (posP p) lv [blkSq,floortile],pms], op ]
 
-main = do
+{-main = do
   lv <- genLevel 60 60
   let testWorld = Overworld lv (startingPlayer{posP=(5,3),headingP = Right})  [spaceman (5,5)]
   pic <- renderWorld testWorld
-  display (InWindow "test" (1920,1080) (0,0)) red pic
-
-
-
+  display (InWindow "test" (1920,1080) (0,0)) red pic-}

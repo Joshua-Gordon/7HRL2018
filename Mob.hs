@@ -2,6 +2,7 @@ module Mob where
 
 import Util
 import Item
+import {-# SOURCE #-} Level
 
 import Data.Maybe
 
@@ -46,7 +47,7 @@ data Player = Player {
 startingPlayer :: Player
 startingPlayer = Player {
 									nameP = "bbrian",
-									posP = (0,0),
+									posP = (5,10),
 									invP = [],
 									headingP = Util.Up,
 									statsP = defaultStats
@@ -58,6 +59,12 @@ instance Mob Player where
 	heading = headingP
 	name = nameP
 	baseStats = statsP
+
+getHeading :: Player -> Heading
+getHeading = headingP
+
+getPos :: Player -> Pos
+getPos = posP
 
 data Monster = Monster {
 							nameM :: String,
@@ -91,9 +98,9 @@ spaceman p = Monster {
 													 }
 }
 
-movePlayer :: Heading -> Player -> Player
-movePlayer h p = let (x,y) = posP p in case h of
-									Util.Up -> p{posP=(x,y-1)}
-									Util.Down -> p{posP=(x,y+1)}
-									Util.Left -> p{posP=(x-1,y)}
-									Util.Right -> p{posP=(x+1,y)}
+movePlayer :: Heading -> Player -> Level -> Player
+movePlayer h p l = let (x,y) = posP p in case h of
+									Util.Up -> if l!!x!!(y+1) == Floor then p{posP=(x,y+1)} else p
+									Util.Down -> if l!!x!!(y-1) == Floor then p{posP=(x,y-1)} else p
+									Util.Left -> if l!!(x-1)!!y == Floor then p{posP=(x-1,y)} else p
+									Util.Right -> if l!!(x+1)!!y == Floor then p{posP=(x+1,y)} else p

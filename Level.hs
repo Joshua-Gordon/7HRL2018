@@ -16,19 +16,15 @@ type Level = [[Tile]]
 data World = Overworld Level Player [Monster]
 
 handleInput :: Event -> World -> IO World
-handleInput (EventKey (SpecialKey KeyUp) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = do print "up"; return $ Overworld l (movePlayer Util.Up p) ms
-handleInput (EventKey (SpecialKey KeyDown) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld l (movePlayer Util.Down p) ms
-handleInput (EventKey (SpecialKey KeyLeft) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld l (movePlayer Util.Left p) ms
-handleInput (EventKey (SpecialKey KeyRight) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld l (movePlayer Util.Right p) ms
+handleInput (EventKey (SpecialKey KeyUp) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = do print "up"; return $ Overworld l (movePlayer Util.Up p l) ms
+handleInput (EventKey (SpecialKey KeyDown) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld l (movePlayer Util.Down p l) ms
+handleInput (EventKey (SpecialKey KeyLeft) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld l (movePlayer Util.Left p l) ms
+handleInput (EventKey (SpecialKey KeyRight) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld l (movePlayer Util.Right p l) ms
+handleInput (EventKey (Char 'd') Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld (drill l p) p ms
 handleInput _ w = return w
 
-data Tile = Floor | Wall | Object (Player -> Player) --Have Object include function for interact
-
-instance Eq Tile where
-  Floor == Floor = True
-  Wall == Wall = True
-  Floor == Wall = False
-  Wall == Floor = False
+data Tile = Floor | Wall
+  deriving (Eq,Show)
 
 
 randBool :: IO Bool
@@ -74,3 +70,18 @@ width l = length (head l)
 
 height :: Level -> Int
 height = length
+
+boundLevel :: Level -> Level
+boundLevel l = let sides = map (\s -> Wall : s ++ [Wall]) l
+                   n = length (head sides)
+                   bound = replicate n Wall
+               in bound : sides ++ [bound]
+
+drill :: Level -> Player -> Level
+drill l p = let (x,y) = getPos p
+                (x',y') = case getHeading p of
+                            Util.Up -> (x,y+1)
+                            Util.Down -> (x,y-1)
+                            Util.Left -> (x-1,y)
+                            Util.Right -> (x+1,y)
+                in [[if m == x' && n == y' then Floor else l!!n!!m | m <- [0 .. length l - 1]] | n <- [0 .. length (head l) - 1]]
