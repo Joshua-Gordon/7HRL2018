@@ -22,9 +22,10 @@ main = do
   lv' <- genLevel 33 59
   let lv = boundLevel lv'
   alien <- spaceman (5,5)
-  let testWorld = Overworld lv startingPlayer [alien]
-  let testbattle = Battle testWorld startingPlayer [alien] (True,True) (State None AttackM) True
-  playIO FullScreen red 5 testWorld renderWorld handleInput idstep
+  stairs <- stairs (10,10)
+  let testWorld = Overworld lv startingPlayer [alien, stairs]
+  let testbattle = Battle testWorld startingPlayer [alien, stairs] (True,True) (State None AttackM) True
+  playIO FullScreen red 5 testbattle renderWorld handleInput idstep
 
 idstep _ w@(Overworld l p lm) = do
   let newMonsters = map (\m -> monsterThink m w) lm
