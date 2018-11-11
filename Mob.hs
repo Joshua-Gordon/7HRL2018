@@ -38,8 +38,9 @@ applyStats l r = Stats {
 
 data Action =
 	Move Pos |
-	Use Item.Item |
-	Attack Mob
+	Use Item |
+	Attack Mob |
+	Defend
 
 class Mob where
 	inv :: Inv
