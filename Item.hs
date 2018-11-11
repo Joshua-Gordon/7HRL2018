@@ -2,12 +2,13 @@ module Item where
 
 import Level
 import Util
+import {-# SOURCE #-} Mob
 
 data Item = Item {
 	name :: String,
 	desc :: String,
 	equipStats :: Maybe Stats,
-  use :: Pos -> Level -> Level
+  use :: Pos -> World -> World
 	}
 
 type Inv = [Item]
@@ -28,13 +29,3 @@ data Stats = Stats {
 	def :: Int,
 	spd :: Int
 }
-
-drill :: Item
-drill = Item {
-  name = "drill",
-  desc = "Your handy drill. Clears wreckage blocking your path.",
-  equipStats = Nothing,
-  use = usedrill
-} where
-  usedrill :: Pos -> Level -> Level
-  usedrill (x,y) l = [[if m == x && n == y then Floor else l!!m!!n | m <- [0..length l - 1]] | n <- [0 .. length (head l) - 1]]

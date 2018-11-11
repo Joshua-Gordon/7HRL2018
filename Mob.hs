@@ -32,6 +32,9 @@ class Mob a where
 	effStats x = foldr (applyStats) (baseStats x) (catMaybes $ map equipStats $ inv x)
 
 
+healPlayer :: Int -> Player -> Player
+healPlayer n m = let s = statsP m in m{statsP=s{hp=max (hpmax s) (n + hp s)}}
+
 data Player = Player {
 							nameP :: String,
 							posP :: Pos,
