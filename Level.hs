@@ -10,7 +10,7 @@ import {-# SOURCE #-} Mob
 
 type Level = [[Tile]]
 
-
+data World = Overworld Level Player [Monster]
 
 data Tile = Floor | Wall | Object (Player -> Player) --Have Object include function for interact
 
