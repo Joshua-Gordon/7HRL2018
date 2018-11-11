@@ -59,7 +59,7 @@ generate n l | n == 0 = l
              | otherwise = generate (n-1) [[step x y l | x <- [0..length l - 1]] | y <- [0..length (head l) - 1]]
 
 tile :: Level -> Pos -> Tile
-tile l p = (l !! (fst p)) !! (snd p)
+tile l p = Just l !!! (fst p) !!! (snd p)
 
 width :: Level -> Int
 width l = length (head l)
