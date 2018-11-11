@@ -18,12 +18,23 @@ type Level = [[Tile]]
 data World = Overworld Level Player [Monster] | Battle World Player [Monster] (Bool,Bool) BattleState Bool
 
 handleInput :: Event -> World -> IO World
-handleInput (EventKey (SpecialKey KeyUp) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = do print "up"; return $ Overworld l (movePlayer Util.Up p l) ms
-handleInput (EventKey (SpecialKey KeyDown) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld l (movePlayer Util.Down p l) ms
-handleInput (EventKey (SpecialKey KeyLeft) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld l (movePlayer Util.Left p l) ms
-handleInput (EventKey (SpecialKey KeyRight) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld l (movePlayer Util.Right p l) ms
+handleInput (EventKey (SpecialKey KeyUp) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld l (movePlayer Util.Up p l) (map (alertMonster (getPos p)) ms)
+handleInput (EventKey (SpecialKey KeyDown) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld l (movePlayer Util.Down p l) (map (alertMonster (getPos p)) ms)
+handleInput (EventKey (SpecialKey KeyLeft) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld l (movePlayer Util.Left p l) (map (alertMonster (getPos p)) ms)
+handleInput (EventKey (SpecialKey KeyRight) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld l (movePlayer Util.Right p l) (map (alertMonster (getPos p)) ms)
 handleInput (EventKey (Char 'd') Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld (drill l p) p ms
 handleInput _ w = return w
+
+hearRadius :: Double
+hearRadius = 15.0
+
+hearSeekTime :: Int
+hearSeekTime = 45
+
+alertMonster :: Pos -> Monster -> Monster
+alertMonster p m = if (l2 (getMonsterPos m) p) <= hearRadius
+	then setHeard m p hearSeekTime
+	else m
 
 data Tile = Floor | Wall
   deriving (Eq,Show)

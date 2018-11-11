@@ -13,6 +13,7 @@ chunk n xs = take n xs : chunk n (drop n xs)
 
 
 data Heading = Up | Down | Left | Right
+	deriving Eq
 
 applyHeading :: Pos -> Heading -> Int -> Pos
 applyHeading (x,y) Util.Up d = (x, y+d)
@@ -37,3 +38,17 @@ replace xs n x = take (n-1) xs ++ [x] ++ drop n xs
 
 remove :: [a] -> Int -> [a]
 remove xs n = take (n-1) xs ++ drop n xs
+
+l2 :: Pos -> Pos -> Double
+l2 (xa,ya) (xb,yb) = let
+	dx = (fromIntegral $ xa-xb) :: Double
+	dy = (fromIntegral $ ya-yb) :: Double
+	in sqrt (dx * dx + dy * dy)
+
+closestHeading :: Pos -> Pos -> Heading
+closestHeading (xa,ya) (xb,yb) = let
+	dx = xb-xa
+	dy = yb-ya
+	in if (abs dx) > (abs dy)
+		then if (signum dx) >= 0 then Util.Right else Util.Left
+		else if (signum dy) >= 0 then Util.Up else Util.Down
