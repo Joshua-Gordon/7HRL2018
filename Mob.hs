@@ -84,3 +84,10 @@ spaceman p = Monster {
 														spd = 6
 													 }
 }
+
+movePlayer :: Heading -> Player -> Player
+movePlayer h p = let (x,y) = posP p in case h of
+									Util.Up -> p{posP=(x,y-1)}
+									Util.Down -> p{posP=(x,y+1)}
+									Util.Left -> p{posP=(x-1,y)}
+									Util.Right -> p{posP=(x+1,y)}

@@ -1,5 +1,8 @@
 module Level where
 
+import Graphics.Gloss
+import Graphics.Gloss.Interface.IO.Game
+
 import System.Random
 import Control.Monad
 
@@ -11,6 +14,13 @@ import {-# SOURCE #-} Mob
 type Level = [[Tile]]
 
 data World = Overworld Level Player [Monster]
+
+handleInput :: Event -> World -> IO World
+handleInput (EventKey (SpecialKey KeyUp) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = do print "up"; return $ Overworld l (movePlayer Util.Up p) ms
+handleInput (EventKey (SpecialKey KeyDown) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld l (movePlayer Util.Down p) ms
+handleInput (EventKey (SpecialKey KeyLeft) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld l (movePlayer Util.Left p) ms
+handleInput (EventKey (SpecialKey KeyRight) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld l (movePlayer Util.Right p) ms
+handleInput _ w = return w
 
 data Tile = Floor | Wall | Object (Player -> Player) --Have Object include function for interact
 
@@ -32,9 +42,7 @@ randBool = do
 genLevel :: Int -> Int -> IO Level
 genLevel x y = do
               boolsflat <- replicateM (x*y) randBool
-              print boolsflat
               let bools = init $ chunk x boolsflat
-              print bools
               let levelFirst = [[if (bools !! n !! m) then Floor else Wall | m <- [0..x-1]] | n <- [0..y-1]]
               return $ generate 100 levelFirst
 

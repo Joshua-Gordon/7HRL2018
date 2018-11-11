@@ -1,9 +1,10 @@
+module Screen where
+
 import Graphics.Gloss
+import Graphics.Gloss.Interface.IO.Game
 import Control.Monad
 import Mob
 import Level
-
-
 
 squareSize :: Float
 squareSize = 32
@@ -14,7 +15,7 @@ testSpace = [[Wall  , Floor , Wall ],
              [Wall  , Floor , Wall ]]
 
 drawLevel :: (Int,Int) -> [[Tile]] -> [Picture] -> Picture
-drawLevel p tss as = translate (-29*32) (-16*32) 
+drawLevel p tss as = translate (-29*32) (-16*32)
   $ let ntss = grab p tss in drawGrid $ map (map ((flip drawSpace) as)) ntss
 
 grab :: (Int,Int) -> [[a]] -> [[a]]
@@ -48,12 +49,3 @@ renderWorld :: World -> IO Picture
 renderWorld (Overworld lv p ms) = do
   [floortile,player] <- sequence $ map loadBMP ["floortile.bmp","player.bmp"]
   return $ Pictures [drawLevel (29,17) lv [blkSq,floortile],player]
-
-main = do
-  lv <- genLevel 59 33 
-  let testWorld = Overworld lv startingPlayer []
-  pic <- renderWorld testWorld
-  display (InWindow "test" (1920,1080) (0,0)) red pic
-
-
-

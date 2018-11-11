@@ -1,3 +1,5 @@
+module Screen where
+
 import Graphics.Gloss
 import Control.Monad
 import Util
@@ -15,7 +17,7 @@ testSpace = [[Wall  , Floor , Wall ],
              [Wall  , Floor , Wall ]]
 
 drawLevel :: (Int,Int) -> [[Tile]] -> [Picture] -> Picture
-drawLevel p tss as = translate (-29*32) (-16*32) 
+drawLevel p tss as = translate (-29*32) (-16*32)
   $ let ntss = grab p tss in drawGrid $ map (map ((flip drawSpace) as)) ntss
 
 grab :: (Int,Int) -> [[a]] -> [[a]]
@@ -55,12 +57,3 @@ renderWorld (Overworld lv p ms) = do
   [floortile,player,alien] <- sequence $ map loadBMP ["floortile.bmp","player.bmp","alien.bmp"]
   let op = orient (heading p) player
   return $ Pictures [drawLevel (29,17) lv [blkSq,floortile],op]
-
-main = do
-  lv <- genLevel 59 33 
-  let testWorld = Overworld lv (startingPlayer{headingP = Right})  []
-  pic <- renderWorld testWorld
-  display (InWindow "test" (1920,1080) (0,0)) red pic
-
-
-
