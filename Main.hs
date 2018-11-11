@@ -1,6 +1,7 @@
 module Main where
 
 import System.Random
+import System.Process
 
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
@@ -17,6 +18,7 @@ import Util
 main :: IO ()
 --main = sMain
 main = do
+  system "cd intro; python2 release.py"
   lv' <- genLevel 33 59
   let lv = boundLevel lv'
   alien <- spaceman (5,5)
