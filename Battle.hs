@@ -1,9 +1,13 @@
 module Battle where
 
+import Graphics.Gloss
+import Graphics.Gloss.Interface.IO.Game
+
 import Mob
 import Item
+import Level
 
-data PlayerAction = Attack | Item Item | Ability Item | Run | None deriving Eq
-data MonsterAction = AttackM | ItemM Item | AbilityM Item deriving Eq
+data PlayerAction = Attack | Run | None deriving Eq
+data MonsterAction = AttackM  deriving Eq
 
 data BattleState = State PlayerAction MonsterAction

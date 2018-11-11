@@ -23,7 +23,19 @@ handleInput (EventKey (SpecialKey KeyDown) Graphics.Gloss.Interface.IO.Game.Down
 handleInput (EventKey (SpecialKey KeyLeft) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld l (movePlayer Util.Left p l) (map (alertMonster (getPos p)) ms)
 handleInput (EventKey (SpecialKey KeyRight) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld l (movePlayer Util.Right p l) (map (alertMonster (getPos p)) ms)
 handleInput (EventKey (Char 'd') Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = return $ Overworld (drill l p) p ms
-handleInput _ w = return w
+handleInput k b = handleBattleInput k b
+
+handleBattleInput :: Event -> World -> IO World
+handleBattleInput (EventKey (SpecialKey KeyUp) Graphics.Gloss.Interface.IO.Game.Down _ _) here@(Battle w p ms (selx,sely) (State pa ma) turn) = return $ Battle w p ms (selx, not sely) (State pa ma) turn
+handleBattleInput (EventKey (SpecialKey KeyDown) Graphics.Gloss.Interface.IO.Game.Down _ _) here@(Battle w p ms (selx,sely) (State pa ma) turn) = return $  Battle w p ms (selx, not sely) (State pa ma) turn
+handleBattleInput (EventKey (SpecialKey KeyLeft) Graphics.Gloss.Interface.IO.Game.Down _ _) here@(Battle w p ms (selx,sely) (State pa ma) turn) = return $  Battle w p ms (not selx,sely) (State pa ma) turn
+handleBattleInput (EventKey (SpecialKey KeyRight) Graphics.Gloss.Interface.IO.Game.Down _ _) here@(Battle w p ms (selx,sely) (State pa ma) turn) = return $  Battle w p ms (not selx,sely) (State pa ma) turn
+handleBattleInput (EventKey (SpecialKey KeyEnter) Graphics.Gloss.Interface.IO.Game.Down _ _) here@(Battle w p ms (selx,sely) (State pa ma) turn) = case (selx,sely) of
+                                                                                                                                                      (True,True) -> return $  Battle w p ms (selx,sely) (State Attack ma) turn
+                                                                                                                                                      (True,False) -> return $  Battle w p ms (selx,sely) (State pa ma) turn --make it actually use ability when that is a thing
+                                                                                                                                                      (False,True) -> return $  Battle w p ms (selx,sely) (State pa ma) turn --make it actually use item when that is a thing
+                                                                                                                                                      (False,False) -> return $  Battle w p ms (selx,sely) (State Run ma) turn
+handleBattleInput _ w = return w
 
 hearRadius :: Double
 hearRadius = 15.0
