@@ -13,7 +13,7 @@ import {-# SOURCE #-} Mob
 
 type Level = [[Tile]]
 
-data World = Overworld Level Player [Monster]
+data World = Overworld Level Player [Monster] | Battle Overworld Player [Monster]
 
 handleInput :: Event -> World -> IO World
 handleInput (EventKey (SpecialKey KeyUp) Graphics.Gloss.Interface.IO.Game.Down _ _) (Overworld l p ms) = do print "up"; return $ Overworld l (movePlayer Util.Up p) ms
