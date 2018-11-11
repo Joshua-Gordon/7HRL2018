@@ -28,3 +28,13 @@ data Stats = Stats {
 	def :: Int,
 	spd :: Int
 }
+
+drill :: Item
+drill = Item {
+  name = "drill",
+  desc = "Your handy drill. Clears wreckage blocking your path.",
+  equipStats = Nothing,
+  use = usedrill
+} where
+  usedrill :: Pos -> Level -> Level
+  usedrill (x,y) l = [[if m == x && n == y then Floor else l!!m!!n | m <- [0..length l - 1]] | n <- [0 .. length (head l) - 1]]
