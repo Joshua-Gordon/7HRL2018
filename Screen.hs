@@ -48,10 +48,12 @@ drawM m ps = let (x,y) = posM m in translate (scale x) (scale y) $ orient (headi
 
 renderWorld :: World -> IO Picture
 renderWorld (Overworld lv p ms) = do
-  [floortile,player,alien,stairs] <- sequence $ map loadBMP ["floortile.bmp","player.bmp","alien.bmp","stairs.bmp"]
+  [floortile,player,alien,stairs,keychain] <- sequence 
+    $ map loadBMP ["floortile.bmp","player.bmp","alien.bmp","stairs.bmp","stairs.bmp"]
   let (px,py) = posP p
   let op = orient (heading p) player
-  let pms = Pictures $ map (flip drawM [("Spaceman",alien),("stairs",stairs)] ) ms
+  let pms = Pictures $ map (flip drawM [("Spaceman",alien),("stairs",stairs),("bee",keychain)]) ms
+  print $ map nameM ms
   return $ Pictures [ translate (scale (-1*px)) (scale (-1*py)) $ Pictures [drawLevel (posP p) lv [blkSq,floortile],pms], op ]
 
 renderBattle :: World -> IO Picture
@@ -67,7 +69,6 @@ renderBattle (Battle w p ms selected state turn) = do
 main' = do
   lv <- genLevel 60 60
   alien <- spaceman (5,5)
-  let testWorld = Overworld lv (startingPlayer{posP=(5,3),headingP = Right})  [alien{nameM="stairs"},alien]
-  let testWorld = Overworld lv (startingPlayer{posP=(5,3),headingP = Right})  [alien]
+  let testWorld = Overworld lv (startingPlayer{posP=(5,3),headingP = Right})  [alien{nameM="stairs"}]
   pic <- renderWorld testWorld
   display (InWindow "test" (1920,1080) (0,0)) red pic

@@ -20,12 +20,22 @@ main = do
   lv' <- genLevel 33 59
   let lv = boundLevel lv'
   alien <- spaceman (5,5)
-  let testWorld = Overworld lv startingPlayer [alien]
+  let testWorld = Overworld lv startingPlayer [alien{nameM="stairs"}]
   playIO FullScreen red 1 testWorld renderWorld handleInput idstep
 
 idstep _ w@(Overworld l p lm) = do
   let newMonsters = map (\m -> monsterThink m w) lm
+  let pp = pos p
+  let cols = filter (\m -> posM m == pp) newMonsters
+  if not $ null $ filter (\m -> nameM m == "stairs") cols then do
+    lv' <- genLevel 33 59
+    let lv = boundLevel lv'
+    alien <- spaceman (5,5)
+    let testWorld = Overworld lv startingPlayer [alien{nameM="stairs"}]
+    return testWorld
+  else do
   return $ Overworld l p newMonsters
+  
 
 stepBattle :: Float -> World -> IO World
 stepBattle _ here@(Battle w p ms sel (State pa ma) turn) | null ms = return w
