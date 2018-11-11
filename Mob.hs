@@ -10,6 +10,8 @@ defaultStats = Stats { hpmax = 10, hp = 10, atk = 10, def = 10, spd = 10 }
 
 applyStats :: Stats -> Stats -> Stats
 applyStats l r = Stats {
+	hpmax = (hpmax l + hpmax r),
+	hp = (hp l + hp r),
 	atk = ((atk l) + (atk r)),
 	def = ((def l) + (def r)),
 	spd = ((spd l) + (spd r))
