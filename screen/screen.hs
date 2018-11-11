@@ -1,5 +1,8 @@
 import Graphics.Gloss
+import Control.Monad
+import Mob
 import Level
+
 
 
 squareSize :: Float
@@ -10,8 +13,8 @@ testSpace = [[Wall  , Floor , Wall ],
              [Floor , Floor , Floor],
              [Wall  , Floor , Wall ]]
 
-render :: (Int,Int) -> [[Tile]] -> [Picture] -> Picture
-render p tss as = translate (-29*32) (-16*32) 
+drawLevel :: (Int,Int) -> [[Tile]] -> [Picture] -> Picture
+drawLevel p tss as = translate (-29*32) (-16*32) 
   $ let ntss = grab p tss in drawGrid $ map (map ((flip drawSpace) as)) ntss
 
 grab :: (Int,Int) -> [[a]] -> [[a]]
@@ -40,8 +43,17 @@ drawSpace Floor as = head $ tail as
 blkSq :: Picture
 blkSq = color black $ rectangleSolid squareSize squareSize
 
+
+renderWorld :: World -> IO Picture
+renderWorld (Overworld lv p ms) = do
+  [floortile,player] <- sequence $ map loadBMP ["floortile.bmp","player.bmp"]
+  return $ Pictures [drawLevel (29,17) lv [blkSq,floortile],player]
+
 main = do
   lv <- genLevel 59 33 
-  floortile <- loadBMP "floortile.bmp"
-  display (InWindow "Test" (1920,1080) (50,50) ) white $ render (29,17) lv [blkSq,floortile]
+  let testWorld = Overworld lv startingPlayer []
+  pic <- renderWorld testWorld
+  display (InWindow "test" (1920,1080) (0,0)) red pic
+
+
 
