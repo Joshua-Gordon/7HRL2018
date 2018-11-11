@@ -34,9 +34,11 @@ stepBattle _ here@(Battle w p ms sel (State pa ma) turn) | null ms = return w
                                                       Run -> return w
                                                       Attack -> do
                                                         g <- getStdGen
-                                                        (idx,g') <- choice g [0..length ms]-- :: (Int,StdGen)
+                                                        let (idx,g') = choice g [0..length ms]-- :: (Int,StdGen)
                                                         let m = attackMob p (ms !! idx)
-                                                        return $ Battle w p (replace ms idx m) sel (State None ma)
+                                                        return $ case m of
+                                                          Just m' -> Battle w p (replace ms idx m') sel (State None ma) False
+                                                          Nothing -> Battle w p (remove ms idx) sel (State None ma) False
                                                       Item _ -> return here
                                                       Ability _ -> return here
                                                       else return here

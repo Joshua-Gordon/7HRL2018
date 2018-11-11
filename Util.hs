@@ -32,5 +32,8 @@ choice s l = let
 	(idx, newS) = randomR (0,ln - 1) s
 	in (l !! idx, newS)
 
-replace :: (Eq a) => [a] -> Int -> a -> [a]
+replace :: [a] -> Int -> a -> [a]
 replace xs n x = take (n-1) xs ++ [x] ++ drop n xs
+
+remove :: [a] -> Int -> [a]
+remove xs n = take (n-1) xs ++ drop n xs
