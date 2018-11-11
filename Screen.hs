@@ -53,6 +53,7 @@ renderWorld (Overworld lv p ms) = do
   let op = orient (heading p) player
   let pms = Pictures $ map (flip drawM [("Spaceman",alien),("stairs",stairs)] ) ms
   return $ Pictures [ translate (scale (-1*px)) (scale (-1*py)) $ Pictures [drawLevel (posP p) lv [blkSq,floortile],pms], op ]
+renderWorld b = renderBattle b
 
 renderBattle :: World -> IO Picture
 renderBattle (Battle w p ms selected state turn) = do
