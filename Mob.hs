@@ -8,12 +8,12 @@ data Item = Item {
 	name :: String,
 	desc :: String,
 	equipStats :: Maybe Stats,
-	use :: Mob.Mob -> Maybe Mob,
-}
+	use :: Pos
+	}
 
 type Inv = [Item]
 
-data Equip {
+data Equip = Equip {
 	lHand :: Maybe Item,
 	rHand :: Maybe Item,
 	chest :: Maybe Item,
@@ -40,42 +40,39 @@ applyStats l r = Stats {
 	spd = ((spd l) + (spd r))
 }
 
-data Action =
-	Move Pos |
-	Use Item |
-	Attack Mob |
-	Defend |
-	NOP
 
-class Mob where
-	inv :: Inv
-	pos :: Pos
-	act :: Action
-	heading :: Heading
 
-	baseStats :: Stats
-	baseStats = defaultStats
+class Mob a where
+	inv :: a -> Inv
+	pos :: a -> Pos
+	heading :: a -> Heading
 
-	effStats :: Stats
-	effStats = foldr (applyStats) (baseStats x) (catMaybe $ map equipStats $ inv x)
+	baseStats :: a -> Stats
+	baseStats _ = defaultStats
+
+	effStats :: a -> Stats
+	effStats x = foldr (applyStats) (baseStats x) (catMaybes $ map equipStats $ inv x)
+
 
 data Player = Player {
-							pos :: Pos,
-							inv :: Inv,
-							heading :: Heading,
-							stats :: Stats
+							posP :: Pos,
+							invP :: Inv,
+							headingP :: Heading,
+							statsP :: Stats
 							}
 
 startingPlayer :: Player
 startingPlayer = Player {
-									pos = (0,0),
-									inv = [],
-									heading = Util.Up,
-									stats = defaultStats
+									posP = (0,0),
+									invP = [],
+									headingP = Util.Up,
+									statsP = defaultStats
 									}
 
-instance Player Mob where
-	inv = inv,
-	pos = pos,
-	heading = heading,
-	baseStats = stats
+instance Mob Player where
+	inv = invP
+	pos = posP
+	heading = headingP
+	baseStats = statsP
+
+data Monster

@@ -6,10 +6,13 @@ import Control.Monad
 import Debug.Trace
 
 import Util
+import Mob
 
 type Level = [[Tile]]
 
-data Tile = Floor | Wall | Object --Have Object include function for interact
+
+
+data Tile = Floor | Wall | Object (->) Player Player --Have Object include function for interact
             deriving (Eq,Show)
 
 randBool :: IO Bool
