@@ -31,14 +31,14 @@ idstep _ w@(Overworld l p lm) = do
   let newMonsters = map (\m -> monsterThink m w) lm
   let pp = pos p
   let cols = filter (\m -> posM m == pp) newMonsters
-  {-if not $ null $ filter (\m -> nameM m == "stairs") cols then do
+  if not $ null $ filter (\m -> nameM m == "stairs") cols then do
     lv' <- genLevel 33 59
     let lv = boundLevel lv'
     alien <- spaceman (7,5)
     let testWorld = Overworld lv startingPlayer [alien{nameM="stairs"},alien{posM=(10,7)}]
     return testWorld
-  else do-}
-  return $ Overworld l p newMonsters
+  else do
+	  return $ Overworld l p newMonsters
 idstep f b = stepBattle f b
 
 stepBattle :: Float -> World -> IO World
