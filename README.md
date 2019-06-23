@@ -10,7 +10,6 @@ Main
 Level
   Level.hs (contains proc gen code, implements world step)
   Hazard.hs (uses event, runs one of several possible hazard events defined here)
-  Story.hs (contains list of ethnic slurs Brian)
 Event
   Event.hs (contains code to interrupt the real-time game)
   Battle.hs (contains code to run battle)
